@@ -1,5 +1,14 @@
 package main
 
+import (
+	"fmt"
+	"goges/conf"
+)
+
 func main() {
-	println("Hello, World!")
+	conf.LoadEnv()
+
+	credentials := conf.GetMygesCredentials()
+
+	fmt.Printf("username = %s, password = %s", credentials.Username, credentials.Password)
 }
