@@ -1,14 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"goges/conf"
+	"goges/kordis"
 )
 
 func main() {
 	conf.LoadEnv()
 
-	credentials := conf.GetMygesCredentials()
+	credentials := kordis.GetMygesCredentials()
 
-	fmt.Printf("username = %s, password = %s", credentials.Username, credentials.Password)
+	kordis.Connect(&credentials)
 }
