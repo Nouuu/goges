@@ -6,14 +6,20 @@ import (
 )
 
 func main() {
+
 	err := conf.LoadEnv()
 	if err != nil {
 		panic(err)
 	}
 
-	credentials := kordis.GetMygesCredentials()
-	err = credentials.Connect()
+	credentials, err := kordis.GetMygesCredentials()
 	if err != nil {
 		panic(err)
 	}
+
+	agenda, err := credentials.GetAgendaFromNow(10)
+	if err != nil {
+		panic(err)
+	}
+	kordis.PrintAgenda(agenda)
 }
