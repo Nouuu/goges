@@ -11,26 +11,29 @@ import (
 	"time"
 )
 
-func (gesCredentials *MygesCredentials) encodedCredentials() string {
-	joined := strings.Join([]string{gesCredentials.username, gesCredentials.password}, ":")
+func (mygesApi *MygesApi) encodedCredentials() string {
+	joined := strings.Join([]string{mygesApi.username, mygesApi.password}, ":")
 	bytes := []byte(joined)
 	return base64.StdEncoding.EncodeToString(bytes)
 }
 
-func GetMygesCredentials() MygesCredentials {
-	return MygesCredentials{
+func GetMygesCredentials() (MygesApi, error) {
+	credential := MygesApi{
 		username: os.Getenv(conf.USERNAME_ENV),
 		password: os.Getenv(conf.PASSWORD_ENV),
 	}
+	err := credential.Connect()
+	return credential, err
 }
 
-func (gesCredentials *MygesCredentials) Connect() error {
+func (mygesApi *MygesApi) Connect() error {
+
 	// Creating a new client and setting the redirect policy to no redirect policy.
 	client := resty.New()
 	client.SetRedirectPolicy(resty.NoRedirectPolicy())
 
 	// Calling the function `encodedCredentials` on the struct `gesCredentials` this will return an encoded string of the credentials.
-	credentials := gesCredentials.encodedCredentials()
+	credentials := mygesApi.encodedCredentials()
 
 	// This is a request to the kordis api to get a token.
 	resp, _ := client.R().
@@ -63,8 +66,12 @@ func (gesCredentials *MygesCredentials) Connect() error {
 	}
 
 	// This is setting the token and the time the token was updated.
-	gesCredentials.token = token
-	gesCredentials.LastUpdatedTokenDate = time.Now()
+	mygesApi.token = token
+	mygesApi.tokenType = location.Get("token_type")
+	mygesApi.LastUpdatedTokenDate = time.Now()
+
+	// This is setting the header for the client.
+	mygesApi.client = resty.New()
 
 	return nil
 }
