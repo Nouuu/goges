@@ -6,9 +6,14 @@ import (
 )
 
 func main() {
-	conf.LoadEnv()
+	err := conf.LoadEnv()
+	if err != nil {
+		panic(err)
+	}
 
 	credentials := kordis.GetMygesCredentials()
-
-	kordis.Connect(&credentials)
+	err = credentials.Connect()
+	if err != nil {
+		panic(err)
+	}
 }

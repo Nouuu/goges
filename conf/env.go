@@ -7,7 +7,10 @@ import (
 const USERNAME_ENV = "username"
 const PASSWORD_ENV = "password"
 
-func LoadEnv() {
-	godotenv.Load(".env")
-
+func LoadEnv() error {
+	err := godotenv.Load(".env")
+	if err != nil {
+		return err
+	}
+	return nil
 }
