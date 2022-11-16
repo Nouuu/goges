@@ -8,8 +8,4 @@ require (
 	github.com/joho/godotenv v1.4.0
 )
 
-require (
-	go.uber.org/atomic v1.10.0 // indirect
-	go.uber.org/multierr v1.8.0 // indirect
-	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
-)
+require golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
