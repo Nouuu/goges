@@ -1,8 +1,8 @@
 package main
 
 import (
-	"goges/conf"
-	"goges/kordis"
+	"github.com/nouuu/goges/conf"
+	"github.com/nouuu/goges/kordis"
 )
 
 func main() {
