@@ -7,4 +7,9 @@ require (
 	github.com/joho/godotenv v1.4.0
 )
 
-require golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
+require (
+	github.com/go-co-op/gocron v1.18.0 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
+	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
+)
