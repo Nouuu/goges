@@ -4,9 +4,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const USERNAME_ENV = "username"
-const PASSWORD_ENV = "password"
+const UsernameEnv = "USERNAME"
+const PasswordEnv = "PASSWORD"
+const SchedulerCronEnv = "SCHEDULER_CRON"
+const PLANNING_DAYS_ENV = "PLANNING_DAYS_SYNC"
 
-func LoadEnv() {
-	godotenv.Load(".env")
+func LoadEnv() error {
+	return godotenv.Load(".env")
 }
