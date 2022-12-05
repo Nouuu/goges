@@ -2,24 +2,30 @@ package main
 
 import (
 	"goges/conf"
-	"goges/kordis"
+	"goges/google_api"
+	"os"
+	"strconv"
+	"time"
 )
 
 func main() {
 
-	err := conf.LoadEnv()
+	daysToSync, err := strconv.Atoi(os.Getenv(conf.PlanningDaysSyncEnv))
 	if err != nil {
 		panic(err)
 	}
 
-	credentials, err := kordis.GetMygesCredentials()
-	if err != nil {
-		panic(err)
+	if daysToSync <= 0 {
+		panic("PLANNING_DAYS_SYNC must be a positive integer")
 	}
 
-	agenda, err := credentials.GetAgendaFromNow(10)
+	googleCalendarClient, err := google_api.CalendarClientService()
 	if err != nil {
 		panic(err)
 	}
-	kordis.PrintAgenda(agenda)
+	events, err := googleCalendarClient.GetEvents(time.Now(), time.Now().AddDate(0, 0, daysToSync))
+	if err != nil {
+		panic(err)
+	}
+	google_api.PrintEvents(events)
 }
