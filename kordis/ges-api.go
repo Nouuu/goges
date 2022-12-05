@@ -1,49 +1,35 @@
 package kordis
 
 import (
-	"encoding/base64"
-	"fmt"
 	"github.com/go-resty/resty/v2"
-	"goges/conf"
-	"os"
-	"strings"
 	"time"
 )
 
-type MygesCredentials struct {
+type MygesApi struct {
 	username             string
 	password             string
-	Token                string
+	token                string
+	tokenType            string
 	LastUpdatedTokenDate time.Time
+	client               *resty.Client
 }
 
-func (gesCredentials *MygesCredentials) encodedCredentials() string {
-	joined := strings.Join([]string{gesCredentials.username, gesCredentials.password}, ":")
-	byted := []byte(joined)
-	return base64.StdEncoding.EncodeToString(byted)
-}
+const kordisBaseUrl string = "https://api.kordis.fr"
+const kordisConnectUrl = "https://authentication.kordis.fr/oauth/authorize?response_type=token&client_id=skolae-app"
+const kordiasAgendaUrl = kordisBaseUrl + "/me/agenda"
 
-func GetMygesCredentials() MygesCredentials {
-	return MygesCredentials{
-		username: os.Getenv(conf.USERNAME_ENV),
-		password: os.Getenv(conf.PASSWORD_ENV),
+func (mygesApi *MygesApi) Get(url string, queryParams map[string]string) (*resty.Response, error) {
+	request := mygesApi.prepareRequest()
+	if queryParams != nil {
+		request.SetQueryParams(queryParams)
 	}
+	return request.Get(url)
 }
 
-func Connect(gesCredentials *MygesCredentials) error {
-	client := resty.New()
-	client.SetRedirectPolicy(resty.NoRedirectPolicy())
-	credentials := gesCredentials.encodedCredentials()
-
-	resp, _ := client.R().
-		EnableTrace().
-		SetHeader("Authorization", "Basic "+credentials).
-		Get("https://authentication.kordis.fr/oauth/authorize?response_type=token&client_id=skolae-app")
-
-	headers := resp.Header()
-	location := headers.Get("Location")
-	fmt.Printf("headers = %v\n----\n", headers)
-	fmt.Printf("Location = %v\n----\n", location)
-	fmt.Printf("resp = %v", resp)
-	return nil
+func (mygesApi *MygesApi) prepareRequest() *resty.Request {
+	r := mygesApi.client.R()
+	r.SetHeader("Authorization", mygesApi.tokenType+" "+mygesApi.token)
+	r.SetHeader("Accept", "application/json")
+	r.SetHeader("Content-Type", "application/json")
+	return r
 }
