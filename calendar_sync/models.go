@@ -1,11 +1,6 @@
 package calendar_sync
 
 import (
-	"github.com/golang-module/carbon/v2"
-	"goges/kordis"
-	"google.golang.org/api/calendar/v3"
-	"log"
-	"os"
 	"time"
 )
 
@@ -16,90 +11,39 @@ type Event struct {
 	EndDate time.Time `json:"endDate"`
 	// Title: The title of the event.
 	Title string `json:"title"`
-	// Description: The description of the event.
-	Description string `json:"description"`
+	// Teacher: The teacher of the event.
+	Teacher string `json:"teacher"`
 	// Location: The location of the event.
 	Location string `json:"location"`
+	// Rooms: The rooms of the event.
+	Rooms []*Room `json:"rooms"`
+	// Event Color
+	Color string `json:"color"`
 }
 
-func FromGoogleCalendarEvent(event *calendar.Event) *Event {
-	startDate, err := time.Parse(time.RFC3339, event.Start.DateTime)
-	if err != nil {
-		log.Fatalf("Error parsing start date: %v", err)
-	}
-	endDate, err := time.Parse(time.RFC3339, event.End.DateTime)
-	if err != nil {
-		log.Fatalf("Error parsing end date: %v", err)
-	}
-
-	return &Event{
-		StartDate:   startDate,
-		EndDate:     endDate,
-		Title:       event.Summary,
-		Description: event.Description,
-		Location:    event.Location,
-	}
+type Room struct {
+	Name   string `json:"name"`
+	Campus string `json:"campus"`
 }
 
-func FromGoogleCalendarEvents(events []*calendar.Event) []*Event {
-	result := make([]*Event, len(events))
-	for i, event := range events {
-		result[i] = FromGoogleCalendarEvent(event)
-	}
-	return result
+func Equals(e1, e2 *Event) bool {
+	return e1.StartDate.Equal(e2.StartDate) &&
+		e1.EndDate.Equal(e2.EndDate) &&
+		e1.Title == e2.Title &&
+		e1.Teacher == e2.Teacher &&
+		e1.Location == e2.Location &&
+		equalsRooms(e1.Rooms, e2.Rooms) &&
+		e1.Color == e2.Color
 }
 
-func ToGoogleCalendarEvent(event *Event) *calendar.Event {
-	return &calendar.Event{ // TODO add color in function of location
-		Start: &calendar.EventDateTime{
-			DateTime: event.StartDate.Format(time.RFC3339),
-			TimeZone: event.StartDate.Location().String(),
-		},
-		End: &calendar.EventDateTime{
-			DateTime: event.EndDate.Format(time.RFC3339),
-			TimeZone: event.EndDate.Location().String(),
-		},
-		Summary:     event.Title,
-		Description: event.Description,
-		Location:    event.Location,
+func equalsRooms(rooms []*Room, rooms2 []*Room) bool {
+	if len(rooms) != len(rooms2) {
+		return false
 	}
-}
-
-func ToGoogleCalendarEvents(events []*Event) []*calendar.Event {
-	result := make([]*calendar.Event, len(events))
-	for i, event := range events {
-		result[i] = ToGoogleCalendarEvent(event)
-	}
-	return result
-}
-
-func FromKordisEvent(event *kordis.AgendaEvent, c *carbon.Carbon) *Event {
-	result := &Event{
-		StartDate: c.
-			CreateFromTimestamp(event.StartDate / 1000).
-			SetTimezone(os.Getenv("TZ")).
-			Carbon2Time(),
-		EndDate: c.
-			CreateFromTimestamp(event.EndDate / 1000).
-			SetTimezone(os.Getenv("TZ")).
-			Carbon2Time(),
-		Description: "Intervenant : " + event.Teacher + "\n",
-	}
-	if event.Rooms != nil && len(event.Rooms) > 0 {
-		result.Location = event.Rooms[0].Campus // TODO: use futur location map
-		result.Description += "Salle : \n"
-		for _, room := range event.Rooms {
-			result.Description += "- " + room.Name + "\n"
+	for i, room := range rooms {
+		if room.Name != rooms2[i].Name || room.Campus != rooms2[i].Campus {
+			return false
 		}
 	}
-
-	return result
-}
-
-func FromKordisEvents(events []*kordis.AgendaEvent, c *carbon.Carbon) []*Event {
-	result := make([]*Event, len(events))
-	for i, event := range events {
-		result[i] = FromKordisEvent(event, c)
-	}
-	return result
+	return true
 }
