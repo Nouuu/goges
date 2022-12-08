@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"goges/conf"
+	"goges/internal/conf"
 	"os"
 	"strings"
 	"time"

@@ -1,14 +1,7 @@
 package main
 
-import (
-	"goges/conf"
-	"goges/kordis"
-)
+import "goges/cmd"
 
 func main() {
-	conf.LoadEnv()
-
-	credentials := kordis.GetMygesCredentials()
-
-	kordis.Connect(&credentials)
+	cmd.Go()
 }
