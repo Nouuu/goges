@@ -5,6 +5,8 @@ import (
 )
 
 type Event struct {
+	// Id: the id of the event in the calendar
+	Id string `json:"id"`
 	// StartDate: The start date of the event.
 	StartDate time.Time `json:"startDate"`
 	// EndDate: The end date of the event.

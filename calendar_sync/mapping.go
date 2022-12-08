@@ -22,6 +22,7 @@ func FromGoogleCalendarEvent(event *calendar.Event) *Event {
 	}
 
 	result := &Event{
+		Id:        event.Id,
 		StartDate: startDate,
 		EndDate:   endDate,
 		Title:     event.Summary,
