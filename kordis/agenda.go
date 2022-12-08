@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/golang-module/carbon/v2"
 	"math"
+	"os"
 	"sort"
 	"strconv"
 	"time"
@@ -91,7 +92,7 @@ func (mygesApi *MygesApi) GetAgendaFromNow(days int) (Agenda, error) {
 func PrintAgenda(agenda Agenda) {
 	lang := carbon.NewLanguage()
 	lang.SetLocale("fr")
-	c := carbon.SetLanguage(lang)
+	c := carbon.SetLanguage(lang).SetTimezone(os.Getenv("TZ"))
 
 	sort.Slice(agenda.Result, func(i, j int) bool {
 		return agenda.Result[i].StartDate < agenda.Result[j].StartDate
