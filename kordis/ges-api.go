@@ -2,9 +2,6 @@ package kordis
 
 import (
 	"github.com/go-resty/resty/v2"
-	"github.com/nouuu/goges/conf"
-	"os"
-	"strings"
 	"time"
 )
 
@@ -19,15 +16,7 @@ type MygesApi struct {
 
 const kordisBaseUrl string = "https://api.kordis.fr"
 const kordisConnectUrl = "https://authentication.kordis.fr/oauth/authorize?response_type=token&client_id=skolae-app"
-const kordiasAgendaUrl = kordisBaseUrl + "/me/agenda"
-
-func GetMygesCredentials() MygesCredentials {
-	return MygesCredentials{
-		username: os.Getenv(conf.UsernameEnv),
-		password: os.Getenv(conf.PasswordEnv),
-	}
-	return request.Get(url)
-}
+const kordisAgendaUrl = kordisBaseUrl + "/me/agenda"
 
 func (mygesApi *MygesApi) prepareRequest() *resty.Request {
 	r := mygesApi.client.R()
@@ -35,4 +24,12 @@ func (mygesApi *MygesApi) prepareRequest() *resty.Request {
 	r.SetHeader("Accept", "application/json")
 	r.SetHeader("Content-Type", "application/json")
 	return r
+}
+
+func (mygesApi *MygesApi) Get(url string, queryParams map[string]string) (*resty.Response, error) {
+	request := mygesApi.prepareRequest()
+	if queryParams != nil {
+		request.SetQueryParams(queryParams)
+	}
+	return request.Get(url)
 }

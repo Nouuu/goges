@@ -74,7 +74,7 @@ func (mygesApi *MygesApi) GetAgenda(start time.Time, end time.Time) (Agenda, err
 		"start": strconv.FormatInt(start.UnixMilli(), 10),
 		"end":   strconv.FormatInt(end.UnixMilli(), 10),
 	}
-	response, err := mygesApi.Get(kordiasAgendaUrl, queryParams)
+	response, err := mygesApi.Get(kordisAgendaUrl, queryParams)
 	if err != nil {
 		panic(err)
 	}

@@ -2,8 +2,8 @@ package calendar_sync
 
 import (
 	"github.com/golang-module/carbon/v2"
-	"goges/google_api"
-	"goges/kordis"
+	"github.com/nouuu/goges/google_api"
+	"github.com/nouuu/goges/kordis"
 	"google.golang.org/api/calendar/v3"
 	"log"
 )

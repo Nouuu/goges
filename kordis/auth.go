@@ -4,23 +4,17 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"goges/conf"
+	"github.com/nouuu/goges/conf"
 	"net/url"
 	"os"
 	"strings"
 	"time"
 )
 
-func (mygesApi *MygesApi) encodedCredentials() string {
-	joined := strings.Join([]string{mygesApi.username, mygesApi.password}, ":")
-	bytes := []byte(joined)
-	return base64.StdEncoding.EncodeToString(bytes)
-}
-
-func GetMygesCredentials() (MygesApi, error) {
+func GetMygesApi() (MygesApi, error) {
 	credential := MygesApi{
-		username: os.Getenv(conf.USERNAME_ENV),
-		password: os.Getenv(conf.PASSWORD_ENV),
+		username: os.Getenv(conf.UsernameEnv),
+		password: os.Getenv(conf.PasswordEnv),
 	}
 	err := credential.Connect()
 	return credential, err
@@ -74,4 +68,10 @@ func (mygesApi *MygesApi) Connect() error {
 	mygesApi.client = resty.New()
 
 	return nil
+}
+
+func (mygesApi *MygesApi) encodedCredentials() string {
+	joined := strings.Join([]string{mygesApi.username, mygesApi.password}, ":")
+	bytes := []byte(joined)
+	return base64.StdEncoding.EncodeToString(bytes)
 }
