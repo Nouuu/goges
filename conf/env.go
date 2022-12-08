@@ -9,5 +9,4 @@ const PASSWORD_ENV = "password"
 
 func LoadEnv() {
 	godotenv.Load(".env")
-
 }
