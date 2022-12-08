@@ -2,13 +2,17 @@ package main
 
 import (
 	"github.com/nouuu/goges/conf"
-	"github.com/nouuu/goges/kordis"
+	"github.com/nouuu/goges/scheduler"
 )
 
 func main() {
-	conf.LoadEnv()
+	err := conf.LoadEnv()
+	if err != nil {
+		panic(err)
+	}
 
-	credentials := kordis.GetMygesCredentials()
-
-	kordis.Connect(&credentials)
+	err = scheduler.Main()
+	if err != nil {
+		panic(err)
+	}
 }

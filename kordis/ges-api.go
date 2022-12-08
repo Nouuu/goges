@@ -25,8 +25,8 @@ func (gesCredentials *MygesCredentials) encodedCredentials() string {
 
 func GetMygesCredentials() MygesCredentials {
 	return MygesCredentials{
-		username: os.Getenv(conf.USERNAME_ENV),
-		password: os.Getenv(conf.PASSWORD_ENV),
+		username: os.Getenv(conf.UsernameEnv),
+		password: os.Getenv(conf.PasswordEnv),
 	}
 }
 
