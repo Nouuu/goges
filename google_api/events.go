@@ -2,7 +2,9 @@ package google_api
 
 import (
 	"fmt"
+	"github.com/golang-module/carbon/v2"
 	"google.golang.org/api/calendar/v3"
+	"math"
 	"time"
 )
 
@@ -31,4 +33,40 @@ func (calendar *GoogleCalendar) GetEvents(start time.Time, end time.Time) (event
 		return nil, err
 	}
 	return eventsResult.Items, nil
+}
+
+func (calendar *GoogleCalendar) GetEventsFromNow(days int) (events []*calendar.Event, err error) {
+	return calendar.GetEvents(
+		carbon.Now().StartOfDay().Carbon2Time(),
+		carbon.Now().AddDays(int(math.Max(float64(days), 0))).EndOfDay().Carbon2Time(),
+	)
+}
+
+func (calendar *GoogleCalendar) RemoveEvent(eventId string) (err error) {
+	return calendar.srv.Events.Delete(calendar.calendarId, eventId).Do()
+}
+
+func (calendar *GoogleCalendar) RemoveEvents(events []*calendar.Event) (err error) {
+	for _, event := range events {
+		err = calendar.RemoveEvent(event.Id)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (calendar *GoogleCalendar) AddEvent(event *calendar.Event) (err error) {
+	_, err = calendar.srv.Events.Insert(calendar.calendarId, event).Do()
+	return err
+}
+
+func (calendar *GoogleCalendar) AddEvents(events []*calendar.Event) (err error) {
+	for _, event := range events {
+		err = calendar.AddEvent(event)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
