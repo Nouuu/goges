@@ -17,7 +17,7 @@ func Main() error {
 		timezone = time.UTC
 	}
 
-	_, err = cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow).Parse(cronExpression)
+	_, err = cron.ParseStandard(cronExpression)
 
 	if err != nil {
 		return gocron.ErrCronParseFailure
