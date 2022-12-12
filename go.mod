@@ -1,8 +1,9 @@
 module github.com/nouuu/goges
 
-go 1.19
+go 1.18
 
 require (
+	github.com/caarlos0/env/v6 v6.10.1
 	github.com/go-co-op/gocron v1.18.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/golang-module/carbon/v2 v2.2.2
