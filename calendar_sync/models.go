@@ -42,8 +42,8 @@ func equalsRooms(rooms []*Room, rooms2 []*Room) bool {
 	if len(rooms) != len(rooms2) {
 		return false
 	}
-	for i, room := range rooms {
-		if room.Name != rooms2[i].Name || room.Campus != rooms2[i].Campus {
+	for i := range rooms {
+		if rooms[i].Name != rooms2[i].Name || rooms[i].Campus != rooms2[i].Campus {
 			return false
 		}
 	}

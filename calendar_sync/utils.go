@@ -2,9 +2,9 @@ package calendar_sync
 
 func GetEventsToRemove(kordisEvents []*Event, googleEvents []*Event) []*Event {
 	var result []*Event
-	for _, googleEvent := range googleEvents {
-		if !Contains(kordisEvents, googleEvent) {
-			result = append(result, googleEvent)
+	for i := range googleEvents {
+		if !Contains(kordisEvents, googleEvents[i]) {
+			result = append(result, googleEvents[i])
 		}
 	}
 	return result
@@ -12,17 +12,17 @@ func GetEventsToRemove(kordisEvents []*Event, googleEvents []*Event) []*Event {
 
 func GetEventsToAdd(kordisEvents []*Event, googleEvents []*Event) []*Event {
 	var result []*Event
-	for _, kordisEvent := range kordisEvents {
-		if !Contains(googleEvents, kordisEvent) {
-			result = append(result, kordisEvent)
+	for i := range kordisEvents {
+		if !Contains(googleEvents, kordisEvents[i]) {
+			result = append(result, kordisEvents[i])
 		}
 	}
 	return result
 }
 
 func Contains(events []*Event, event *Event) bool {
-	for _, e := range events {
-		if Equals(e, event) {
+	for i := range events {
+		if Equals(events[i], event) {
 			return true
 		}
 	}

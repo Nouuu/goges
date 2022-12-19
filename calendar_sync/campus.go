@@ -3,7 +3,7 @@ package calendar_sync
 import "fmt"
 
 var campus = map[string][]string{
-	"NATION1":      {"242 rue Faubourg Saint-Antoine, 75012 Paris", ""},
+	"NATION1":      {"242 rue Faubourg Saint-Antoine, 75012 Paris", "10"},
 	"NATION2":      {"220 rue Faubourg Saint-Antoine, 75012 Paris", "2"},
 	"VOLTAIRE1":    {"1 rue Bouvier, 75011 Paris", "5"},
 	"VOLTAIRE2":    {"20 rue Bouvier, 75011 Paris", "5"},

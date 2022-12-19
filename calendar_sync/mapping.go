@@ -49,14 +49,15 @@ func FromGoogleCalendarEvent(event *calendar.Event) *Event {
 
 func FromGoogleCalendarEvents(events []*calendar.Event) []*Event {
 	result := make([]*Event, len(events))
-	for i, event := range events {
-		result[i] = FromGoogleCalendarEvent(event)
+	for i := range events {
+		result[i] = FromGoogleCalendarEvent(events[i])
 	}
 	return result
 }
 
 func ToGoogleCalendarEvent(event *Event) *calendar.Event {
 	result := &calendar.Event{
+		Id: event.Id,
 		Start: &calendar.EventDateTime{
 			DateTime: event.StartDate.Format(time.RFC3339),
 			TimeZone: event.StartDate.Location().String(),
@@ -71,12 +72,12 @@ func ToGoogleCalendarEvent(event *Event) *calendar.Event {
 	}
 
 	if len(event.Teacher) > 0 {
-		result.Description = "<span>" + event.Teacher + "</span>"
+		result.Description = "<span>Intervenant : " + event.Teacher + "</span>"
 	}
 	if len(event.Rooms) > 0 {
 		result.Description = strings.Join([]string{result.Description, "<span>Salle(s) :<ul>"}, "<br>")
-		for _, room := range event.Rooms {
-			result.Description += "<li>" + room.Campus + " - " + room.Name + "</li>"
+		for i := range event.Rooms {
+			result.Description += "<li>" + event.Rooms[i].Campus + " - " + event.Rooms[i].Name + "</li>"
 		}
 		result.Description += "</ul></span>"
 	}
@@ -85,14 +86,15 @@ func ToGoogleCalendarEvent(event *Event) *calendar.Event {
 
 func ToGoogleCalendarEvents(events []*Event) []*calendar.Event {
 	result := make([]*calendar.Event, len(events))
-	for i, event := range events {
-		result[i] = ToGoogleCalendarEvent(event)
+	for i := range events {
+		result[i] = ToGoogleCalendarEvent(events[i])
 	}
 	return result
 }
 
 func FromKordisEvent(event *kordis.AgendaEvent, c *carbon.Carbon) *Event {
 	result := &Event{
+		Title: event.Name,
 		StartDate: c.
 			CreateFromTimestamp(event.StartDate / 1000).
 			SetTimezone(os.Getenv("TZ")).
@@ -101,22 +103,22 @@ func FromKordisEvent(event *kordis.AgendaEvent, c *carbon.Carbon) *Event {
 			CreateFromTimestamp(event.EndDate / 1000).
 			SetTimezone(os.Getenv("TZ")).
 			Carbon2Time(),
-		Teacher: event.Teacher,
+		Teacher: strings.TrimSpace(event.Teacher),
 	}
 	if event.Rooms != nil && len(event.Rooms) > 0 {
 		// Getting campus location from first room
 		campus, err := GetCampus(event.Rooms[0].Campus)
-		if err != nil && len(campus) > 0 {
+		if err == nil && len(campus) > 0 {
 			// If campus is found, add it to result
 			result.Location = campus[0]
 			result.Color = campus[1]
 		}
 
 		result.Rooms = make([]*Room, len(event.Rooms))
-		for i, room := range event.Rooms {
+		for i := range event.Rooms {
 			result.Rooms[i] = &Room{
-				Name:   room.Name,
-				Campus: room.Campus,
+				Name:   event.Rooms[i].Name,
+				Campus: event.Rooms[i].Campus,
 			}
 		}
 	}
@@ -126,8 +128,8 @@ func FromKordisEvent(event *kordis.AgendaEvent, c *carbon.Carbon) *Event {
 
 func FromKordisEvents(events []*kordis.AgendaEvent, c *carbon.Carbon) []*Event {
 	result := make([]*Event, len(events))
-	for i, event := range events {
-		result[i] = FromKordisEvent(event, c)
+	for i := range events {
+		result[i] = FromKordisEvent(events[i], c)
 	}
 	return result
 }
@@ -139,7 +141,7 @@ func extractTeacherAndRoom(html string) (string, []string) {
 	intervenantMatch := intervenantRegexp.FindStringSubmatch(html)
 	var intervenant string
 	if len(intervenantMatch) > 1 {
-		intervenant = intervenantMatch[1]
+		intervenant = strings.TrimSpace(intervenantMatch[1])
 	}
 
 	sallesMatch := salleRegexp.FindAllStringSubmatch(html, -1)

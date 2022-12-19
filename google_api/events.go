@@ -47,7 +47,9 @@ func (calendar *GoogleCalendar) RemoveEvent(eventId string) (err error) {
 }
 
 func (calendar *GoogleCalendar) RemoveEvents(events []*calendar.Event) (err error) {
+	tick := time.Tick(time.Second / 10) // limiter les requêtes à 10 par seconde
 	for i := range events {
+		<-tick // attendre le tick avant d'envoyer la prochaine requête
 		err = calendar.RemoveEvent(events[i].Id)
 		if err != nil {
 			return err
@@ -62,8 +64,10 @@ func (calendar *GoogleCalendar) AddEvent(event *calendar.Event) (err error) {
 }
 
 func (calendar *GoogleCalendar) AddEvents(events []*calendar.Event) (err error) {
-	for _, event := range events {
-		err = calendar.AddEvent(event)
+	tick := time.Tick(time.Second / 10) // limiter les requêtes à 10 par seconde
+	for i := range events {
+		<-tick // attendre le tick avant d'envoyer la prochaine requête
+		err = calendar.AddEvent(events[i])
 		if err != nil {
 			return err
 		}
