@@ -1,18 +1,7 @@
 package main
 
-import (
-	"github.com/nouuu/goges/conf"
-	"github.com/nouuu/goges/scheduler"
-)
+import "github.com/nouuu/goges/cmd"
 
 func main() {
-	err := conf.LoadEnv()
-	if err != nil {
-		panic(err)
-	}
-
-	err = scheduler.Main()
-	if err != nil {
-		panic(err)
-	}
+	cmd.Root()
 }

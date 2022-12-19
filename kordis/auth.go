@@ -6,28 +6,24 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/nouuu/goges/conf"
 	"net/url"
-	"os"
 	"strings"
 	"time"
 )
 
-func GetMygesApi() (MygesApi, error) {
-	credential := MygesApi{
-		username: os.Getenv(conf.UsernameEnv),
-		password: os.Getenv(conf.PasswordEnv),
-	}
-	err := credential.Connect()
+func GetMygesApi(c *conf.Config) (*KordisApi, error) {
+	credential := &KordisApi{}
+	err := credential.connect(c)
 	return credential, err
 }
 
-func (mygesApi *MygesApi) Connect() error {
+func (mygesApi *KordisApi) connect(c *conf.Config) error {
 
 	// Creating a new client and setting the redirect policy to no redirect policy.
 	client := resty.New()
 	client.SetRedirectPolicy(resty.NoRedirectPolicy())
 
 	// Calling the function `encodedCredentials` on the struct `gesCredentials` this will return an encoded string of the credentials.
-	credentials := mygesApi.encodedCredentials()
+	credentials := mygesApi.encodedCredentials(c.Username, c.Password)
 
 	// This is a request to the kordis api to get a token.
 	resp, _ := client.R().
@@ -70,8 +66,8 @@ func (mygesApi *MygesApi) Connect() error {
 	return nil
 }
 
-func (mygesApi *MygesApi) encodedCredentials() string {
-	joined := strings.Join([]string{mygesApi.username, mygesApi.password}, ":")
+func (mygesApi *KordisApi) encodedCredentials(username string, password string) string {
+	joined := strings.Join([]string{username, password}, ":")
 	bytes := []byte(joined)
 	return base64.StdEncoding.EncodeToString(bytes)
 }

@@ -8,15 +8,15 @@ import (
 	"log"
 )
 
-func Sync(days int, googleCalendarClient *google_api.GoogleCalendar, mygesClient *kordis.MygesApi) error {
-	if days <= 0 {
+func Sync(days int, googleCalendarClient *google_api.GoogleCalendar, kordisApi *kordis.KordisApi) error {
+	if days < 0 {
 		return nil
 	}
 	c := carbon.NewCarbon()
 	log.Printf("Syncing %d days\n", days)
 
 	log.Printf("Retrieving events from kordis...\n")
-	kordisEvents, err := mygesClient.GetAgendaFromNow(days)
+	kordisEvents, err := kordisApi.GetAgendaFromNow(days)
 	if err != nil {
 		return err
 	}
@@ -30,15 +30,15 @@ func Sync(days int, googleCalendarClient *google_api.GoogleCalendar, mygesClient
 	log.Printf("Retrieved %d events from google calendar\n", len(googleEvents))
 
 	kordisEventsPointer := make([]*kordis.AgendaEvent, len(kordisEvents.Result))
-	for i, event := range kordisEvents.Result {
-		kordisEventsPointer[i] = &event
+	for i := range kordisEvents.Result {
+		kordisEventsPointer[i] = &kordisEvents.Result[i]
 	}
 
 	convertedKordisEvents := FromKordisEvents(kordisEventsPointer, &c)
 
 	googleEventsPointer := make([]*calendar.Event, len(googleEvents))
-	for i, event := range googleEvents {
-		googleEventsPointer[i] = event
+	for i := range googleEvents {
+		googleEventsPointer[i] = googleEvents[i]
 	}
 
 	convertedGoogleEvents := FromGoogleCalendarEvents(googleEventsPointer)

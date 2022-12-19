@@ -69,7 +69,7 @@ type Discipline struct {
 	TrimesterId      int      `json:"trimester_id"`
 }
 
-func (mygesApi *MygesApi) GetAgenda(start time.Time, end time.Time) (Agenda, error) {
+func (mygesApi *KordisApi) GetAgenda(start time.Time, end time.Time) (Agenda, error) {
 	queryParams := map[string]string{
 		"start": strconv.FormatInt(start.UnixMilli(), 10),
 		"end":   strconv.FormatInt(end.UnixMilli(), 10),
@@ -83,7 +83,7 @@ func (mygesApi *MygesApi) GetAgenda(start time.Time, end time.Time) (Agenda, err
 	return agenda, err
 }
 
-func (mygesApi *MygesApi) GetAgendaFromNow(days int) (Agenda, error) {
+func (mygesApi *KordisApi) GetAgendaFromNow(days int) (Agenda, error) {
 	start := carbon.Now().StartOfDay().Carbon2Time()
 	end := carbon.Now().AddDays(int(math.Max(float64(days), 0))).EndOfDay().Carbon2Time()
 	return mygesApi.GetAgenda(start, end)

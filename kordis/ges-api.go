@@ -5,9 +5,7 @@ import (
 	"time"
 )
 
-type MygesApi struct {
-	username             string
-	password             string
+type KordisApi struct {
 	token                string
 	tokenType            string
 	LastUpdatedTokenDate time.Time
@@ -18,7 +16,7 @@ const kordisBaseUrl string = "https://api.kordis.fr"
 const kordisConnectUrl = "https://authentication.kordis.fr/oauth/authorize?response_type=token&client_id=skolae-app"
 const kordisAgendaUrl = kordisBaseUrl + "/me/agenda"
 
-func (mygesApi *MygesApi) prepareRequest() *resty.Request {
+func (mygesApi *KordisApi) prepareRequest() *resty.Request {
 	r := mygesApi.client.R()
 	r.SetHeader("Authorization", mygesApi.tokenType+" "+mygesApi.token)
 	r.SetHeader("Accept", "application/json")
@@ -26,7 +24,7 @@ func (mygesApi *MygesApi) prepareRequest() *resty.Request {
 	return r
 }
 
-func (mygesApi *MygesApi) Get(url string, queryParams map[string]string) (*resty.Response, error) {
+func (mygesApi *KordisApi) Get(url string, queryParams map[string]string) (*resty.Response, error) {
 	request := mygesApi.prepareRequest()
 	if queryParams != nil {
 		request.SetQueryParams(queryParams)

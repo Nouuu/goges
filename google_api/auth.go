@@ -78,7 +78,7 @@ func saveToken(path string, token *oauth2.Token) {
 	}
 }
 
-func CalendarClientService() (GoogleCalendar, error) {
+func CalendarClientService(c *conf.Config) (*GoogleCalendar, error) {
 	ctx := context.Background()
 	b, err := os.ReadFile("auth/credentials.json")
 	if err != nil {
@@ -93,5 +93,5 @@ func CalendarClientService() (GoogleCalendar, error) {
 	client := getClient(config)
 
 	srv, err := calendar.NewService(ctx, option.WithHTTPClient(client))
-	return GoogleCalendar{srv: srv, calendarId: os.Getenv(conf.CalendarIdEnv)}, err
+	return &GoogleCalendar{srv: srv, calendarId: c.CalendarID}, err
 }

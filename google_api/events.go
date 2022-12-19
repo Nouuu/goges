@@ -12,12 +12,12 @@ func PrintEvents(events []*calendar.Event) {
 	if len(events) == 0 {
 		fmt.Println("No events found.")
 	} else {
-		for _, item := range events {
-			date := item.Start.DateTime
+		for i := range events {
+			date := events[i].Start.DateTime
 			if date == "" {
-				date = item.Start.Date
+				date = events[i].Start.Date
 			}
-			fmt.Printf("%v (%v)\n", item.Summary, date)
+			fmt.Printf("%v (%v)\n", events[i].Summary, date)
 		}
 	}
 }
@@ -47,8 +47,8 @@ func (calendar *GoogleCalendar) RemoveEvent(eventId string) (err error) {
 }
 
 func (calendar *GoogleCalendar) RemoveEvents(events []*calendar.Event) (err error) {
-	for _, event := range events {
-		err = calendar.RemoveEvent(event.Id)
+	for i := range events {
+		err = calendar.RemoveEvent(events[i].Id)
 		if err != nil {
 			return err
 		}

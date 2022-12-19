@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"github.com/caarlos0/env/v6"
 	"github.com/joho/godotenv"
-	"github.com/robfig/cron/v3"
 )
 
 type Config struct {
-	Username         string `env:"USERNAME"`
-	Password         string `env:"PASSWORD"`
+	Username         string `env:"KORDIS_USERNAME"`
+	Password         string `env:"KORDIS_PASSWORD"`
 	SchedulerCron    string `env:"SCHEDULER_CRON"`
 	CalendarID       string `env:"CALENDAR_ID"`
 	PlanningDaysSync int    `env:"PLANNING_DAYS_SYNC"`
@@ -24,7 +23,7 @@ func LoadEnv() (*Config, error) {
 		return nil, err
 	}
 
-	if err := env.Parse(&cfg); err != nil {
+	if err := env.Parse(cfg); err != nil {
 		return nil, err
 	}
 
@@ -36,10 +35,6 @@ func LoadEnv() (*Config, error) {
 }
 
 func (c *Config) Validate() error {
-	// Validate the SchedulerCron field
-	if _, err := cron.ParseStandard(c.SchedulerCron); err != nil {
-		return fmt.Errorf("invalid SchedulerCron value: %w", err)
-	}
 
 	// Validate the PlanningDaysSync field
 	if c.PlanningDaysSync < 0 {
