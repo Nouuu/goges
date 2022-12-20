@@ -5,6 +5,7 @@ import (
 	"github.com/caarlos0/env/v6"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
+	"os"
 )
 
 type Config struct {
@@ -20,7 +21,7 @@ func LoadEnv() (*Config, error) {
 	var cfg = &Config{}
 
 	err := godotenv.Load(".env")
-	if err != nil {
+	if err != nil && !os.IsNotExist(err) {
 		return nil, err
 	}
 

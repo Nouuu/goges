@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine AS builder
+FROM golang:1.18-alpine AS builder
 
 RUN apk add --no-cache git
 
@@ -13,13 +13,22 @@ COPY . .
 RUN go build -x -ldflags "-s -w" -o /go-app/app
 
 FROM alpine:3.16
-
+RUN apk --no-cache add tzdata
 
 WORKDIR /go-app
 
 COPY --from=builder /go-app/app .
 
-ENV username=""\
-    password=""
+ENV KORDIS_USERNAME="" \
+   KORDIS_PASSWORD="" \
+   SCHEDULER_CRON="0 * * * *" \
+   PLANNING_DAYS_SYNC=15 \
+   CALENDAR_ID="" \
+   TZ="Europe/Paris" \
+   MODE="sync"
+
+#sync/scheduler
+
+VOLUME /go-app/auth
 
 ENTRYPOINT ["/go-app/app"]
