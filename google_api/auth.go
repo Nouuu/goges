@@ -95,3 +95,13 @@ func CalendarClientService(c *conf.Config) (*GoogleCalendar, error) {
 	srv, err := calendar.NewService(ctx, option.WithHTTPClient(client))
 	return &GoogleCalendar{srv: srv, calendarId: c.CalendarID}, err
 }
+
+func GetCalendarService(config *conf.Config) *GoogleCalendar {
+	log.Println("Getting Google Calendar service...")
+	googleCalendar, err := CalendarClientService(config)
+	if err != nil {
+		log.Fatalf("error getting Google Calendar service: %v", err)
+	}
+	log.Println("Google Calendar service loaded")
+	return googleCalendar
+}

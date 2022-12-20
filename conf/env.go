@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/caarlos0/env/v6"
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 )
 
 type Config struct {
@@ -39,6 +40,13 @@ func (c *Config) Validate() error {
 	// Validate the PlanningDaysSync field
 	if c.PlanningDaysSync < 0 {
 		return fmt.Errorf("invalid PlanningDaysSync value: must be a positive integer")
+	}
+
+	if len(c.SchedulerCron) > 0 {
+		// Validate the SchedulerCron field
+		if _, err := cron.ParseStandard(c.SchedulerCron); err != nil {
+			return fmt.Errorf("invalid SchedulerCron value: %v", err)
+		}
 	}
 
 	return nil

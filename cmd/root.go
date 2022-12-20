@@ -5,6 +5,7 @@ import (
 	"github.com/nouuu/goges/conf"
 	"github.com/nouuu/goges/google_api"
 	"github.com/nouuu/goges/kordis"
+	"github.com/nouuu/goges/scheduler"
 	"log"
 )
 
@@ -17,25 +18,18 @@ func Root() {
 	}
 	log.Println("Environment variables loaded")
 
-	log.Println("Getting Google Calendar service...")
-	googleCalendar, err := google_api.CalendarClientService(config)
-	if err != nil {
-		log.Fatalf("error getting Google Calendar service: %v", err)
-	}
-	log.Println("Google Calendar service loaded")
+	launchCmd(config)
+}
 
-	log.Println("Getting kordis api service...")
-	kordisApi, err := kordis.GetMygesApi(config)
-	if err != nil {
-		log.Fatalf("error getting kordis api service: %v", err)
-	}
-	log.Println("Kordis api service loaded")
-
+func launchCmd(config *conf.Config) {
 	switch config.Mode {
 	case "scheduler":
-		break
+		err := scheduler.Main(config)
+		if err != nil {
+			log.Fatalf("error in scheduler: %v", err)
+		}
 	case "sync":
-		err := calendar_sync.Sync(config.PlanningDaysSync, googleCalendar, kordisApi)
+		err := calendar_sync.Sync(config.PlanningDaysSync, google_api.GetCalendarService(config), kordis.GetKordisApi(config))
 		if err != nil {
 			log.Fatalf("error syncing: %v", err)
 		}
@@ -43,4 +37,5 @@ func Root() {
 	default:
 		log.Fatalf("unknown mode: %s", config.Mode)
 	}
+
 }

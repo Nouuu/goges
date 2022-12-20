@@ -3,14 +3,18 @@ package scheduler
 import (
 	"fmt"
 	"github.com/go-co-op/gocron"
+	"github.com/nouuu/goges/calendar_sync"
 	"github.com/nouuu/goges/conf"
+	"github.com/nouuu/goges/google_api"
+	"github.com/nouuu/goges/kordis"
 	"github.com/robfig/cron/v3"
+	"log"
 	"os"
 	"time"
 )
 
-func Main() error {
-	cronExpression := os.Getenv(conf.SchedulerCronEnv)
+func Main(config *conf.Config) error {
+	cronExpression := config.SchedulerCron
 	timezone, err := time.LoadLocation(os.Getenv("TZ"))
 	if err != nil {
 		fmt.Printf("Error while loading timezone: %v, using UTC instead", err)
@@ -25,7 +29,7 @@ func Main() error {
 
 	scheduler := gocron.NewScheduler(timezone).Cron(cronExpression).SingletonMode()
 
-	job, err := scheduler.Do(task)
+	job, err := scheduler.Do(task, config)
 
 	if err != nil {
 		return err
@@ -38,8 +42,11 @@ func Main() error {
 	return nil
 }
 
-func task() {
-	fmt.Println("I am running")
+func task(config *conf.Config) {
+	err := calendar_sync.Sync(config.PlanningDaysSync, google_api.GetCalendarService(config), kordis.GetKordisApi(config))
+	if err != nil {
+		log.Print(err)
+	}
 }
 
 func monitorJob(job *gocron.Job, timezone *time.Location) {

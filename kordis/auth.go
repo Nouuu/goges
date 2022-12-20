@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/nouuu/goges/conf"
+	"log"
 	"net/url"
 	"strings"
 	"time"
@@ -70,4 +71,14 @@ func (mygesApi *KordisApi) encodedCredentials(username string, password string) 
 	joined := strings.Join([]string{username, password}, ":")
 	bytes := []byte(joined)
 	return base64.StdEncoding.EncodeToString(bytes)
+}
+
+func GetKordisApi(config *conf.Config) *KordisApi {
+	log.Println("Getting kordis api service...")
+	kordisApi, err := GetMygesApi(config)
+	if err != nil {
+		log.Fatalf("error getting kordis api service: %v", err)
+	}
+	log.Println("Kordis api service loaded")
+	return kordisApi
 }
