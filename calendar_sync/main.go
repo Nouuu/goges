@@ -21,6 +21,10 @@ func Sync(days int, googleCalendarClient *google_api.GoogleCalendar, kordisApi *
 		return err
 	}
 	log.Printf("Retrieved %d events from kordis\n", len(kordisEvents.Result))
+	if len(kordisEvents.Result) == 0 {
+		log.Printf("No events found in kordis, skipping sync\n")
+		return nil
+	}
 
 	log.Printf("Retrieving events from google calendar...\n")
 	googleEvents, err := googleCalendarClient.GetEventsFromNow(days)
