@@ -112,6 +112,8 @@ func FromKordisEvent(event *kordis.AgendaEvent, c *carbon.Carbon) *Event {
 			// If campus is found, add it to result
 			result.Location = campus[0]
 			result.Color = campus[1]
+		} else {
+			result.Color = "11"
 		}
 
 		result.Rooms = make([]*Room, len(event.Rooms))
@@ -121,6 +123,8 @@ func FromKordisEvent(event *kordis.AgendaEvent, c *carbon.Carbon) *Event {
 				Campus: event.Rooms[i].Campus,
 			}
 		}
+	} else {
+		result.Color = "11"
 	}
 
 	return result
